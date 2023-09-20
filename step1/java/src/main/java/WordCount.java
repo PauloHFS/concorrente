@@ -40,9 +40,11 @@ public class WordCount {
 
         if (subdirs != null) {
             for (File subdir : subdirs) {
+                String dirPath = rootPath + "/" + subdir.getName();
                 if (subdir.isDirectory()) {
-                    String dirPath = rootPath + "/" + subdir.getName();
                     count += wcDir(dirPath);
+                } else {
+                    count += wcFile(dirPath);
                 }
             }
         }

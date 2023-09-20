@@ -6,5 +6,4 @@ task runApp(type: JavaExec) {
     main = 'WordCount'
     classpath sourceSets.main.runtimeClasspath
 
-    args '../dataset'
 }
