@@ -77,10 +77,13 @@ func main() {
 	numberOfWords := 0
 
 	for _, file := range files {
+        path := rootPath + "/" + file.Name()
 		if file.IsDir() {
-			directoryPath := rootPath + "/" + file.Name()
-			numberOfWords += wc_dir(directoryPath)
-		}
+			numberOfWords += wc_dir(path)
+		} else {
+            // vou olhar na net se existe um IsFile, deixa, se num é dir é file eu ahco
+            numberOfWords += wc_file(path)
+        }
 	}
 
 	fmt.Println(numberOfWords)
