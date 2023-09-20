@@ -1,9 +1,12 @@
 #!/bin/bash
+cd ./src/main/java
+
 echo "" > result
 
-for file in ../../dataset/*
+for file in ../../../../../dataset/*
 do
-    gradle runApp --args=$file -q >> result &
+    # agora bora trocar esse comando aqui
+    java WordCount $file >> result &
 done
 wait
 
