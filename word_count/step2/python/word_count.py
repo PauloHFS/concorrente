@@ -1,6 +1,8 @@
 import os
 import sys
-from threading import Thread
+from threading import *
+count = 0
+lock = Lock()
 
 #Recebe um conteudo, fatia seus paragrafos/frases e conta os pedaços/palavras,retorna o total de palavras.
 def wc(content):
@@ -17,18 +19,22 @@ def wc_file(filename):
 
 #Recebe um diretorio, passa por todos os elementos dentro desse direitorio,se o elemento é um diretorio:recursão, se o elemento é um arquivo, chama o método acima.
 def wc_dir(dir_path):
-    count = 0
+    global count
+    global lock
+    countI = 0
     for filename in os.listdir(dir_path):
         filepath = os.path.join(dir_path, filename)
         if os.path.isfile(filepath):
-            count += wc_file(filepath)
-        elif os.path.isdir(filepath):
-            count += wc_dir(filepath)  # Chamada recursiva para diretórios
-    return count
+            countI += wc_file(filepath)
+    with lock:
+        count += countI
+        #elif os.path.isdir(filepath):
+            #count += wc_dir(filepath)  # Chamada recursiva para diretórios
 
 def pick_dir(dir_path):
     diretorios = []
-    for filename in os.list(dir_path):
+    for filename in os.listdir(dir_path):
+        filepath = os.path.join(dir_path, filename)
         if os.path.isdir(filepath):
             diretorios.append(filepath)
     return diretorios
@@ -38,12 +44,16 @@ def pick_dir(dir_path):
 
 #Situa uma main que recebe como argumento com um diretorio, e retorna o wc_dir desse direotrio executando todos os métodos acima.
 def main():
+    global count
     if len(sys.argv) != 2:
         print("Usage: python", sys.argv[0], "root_directory_path")
         return
     root_path = os.path.abspath(sys.argv[1])
-    threads = [Thread(target=wc_dir,args(diretorio) for diretorio in pick_dir(root_path)]
-    count = wc_dir(root_path)
+    threads = [Thread(target=wc_dir,args=(diretorio,)) for diretorio in pick_dir(root_path)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
     print(count)
 
 if __name__ == "__main__":
